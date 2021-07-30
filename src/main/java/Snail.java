@@ -11,25 +11,38 @@ public class Snail
     * -If middle, if last element, move down
     * -If last array, move left
     */
-   public static int[] snail(int[][] array) {
+   public static int[] snail(int[][] array)
+   {
 
-      int[] sequence = new int[array.length * array[0].length];
+      int[] result = new int[array.length*array.length];
+      if(array.length==1)
+         return array[0];
 
-      for( int i = 0; i < array.length; i++ )
-      {
-         for( int j = 0; j < array[i].length; j++ )
-         {
-            int sequenceIndex = 0;
+      int position=0;
+      int rowStart=0, rowEnd=array.length-1, columnStart=0, columnEnd=array.length-1;
 
-            if( i == 0 ) sequenceIndex = j;
-            else if (i == array.length - 1) sequenceIndex = array[i].length - j;
-            else if (j == array[i].length) sequenceIndex = array[i].length;
-            else sequenceIndex =
-
-            sequence[sequenceIndex] = array[i][j];
+      for(int i=0; i<array.length/2; i++){
+         for(int r=rowStart; r<=rowEnd; r++){
+            result[position++] = array[columnStart][r];
          }
+         columnStart++;
+         for(int c=columnStart; c<=columnEnd; c++){
+            result[position++] = array[c][rowEnd];
+         }
+         rowEnd--;
+         for(int r=rowEnd; r>=rowStart; r--){
+            result[position++] = array[columnEnd][r];
+         }
+         columnEnd--;
+         for(int c=columnEnd; c>=columnStart; c--){
+            result[position++] = array[c][rowStart];
+         }
+         rowStart++;
+      }
+      if(array.length%2!=0){
+         result[position]=array[rowStart][columnStart];
       }
 
-      return sequence;
+      return result;
    }
 }
