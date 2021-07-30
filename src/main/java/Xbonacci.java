@@ -1,6 +1,4 @@
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.DoubleStream;
+import java.util.Arrays;
 
 public class Xbonacci
 {
@@ -14,14 +12,10 @@ public class Xbonacci
     * @return a tribonacci sequence.
     */
    public double[] tribonacci(double[] s, int n) {
-      List<Double> list = DoubleStream.of( s ).boxed().collect( Collectors.toList());
-
-      for( int i = 0; i < n - s.length; i++ )
-         list.add( list.get( list.size() - 1 ) + list.get( list.size() - 2 ) + list.get( list.size() - 3 ) );
-
-      if( s.length > n )
-         list = list.subList( 0, n );
-      return list.stream().mapToDouble( Double::doubleValue ).toArray();
+      s = Arrays.copyOf( s, n);
+      for (int i = 3; i < n ; i++)
+         s[i] = s[i-1] + s[i-2] + s[i-3];
+      return s;
    }
 
 }
