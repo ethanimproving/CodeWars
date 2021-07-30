@@ -1,7 +1,5 @@
 import java.util.List;
 
-// TODO: complete this object/class
-
 public class PaginationHelper<I> {
 
     List<I> collection;
@@ -35,7 +33,7 @@ public class PaginationHelper<I> {
      * this method should return -1 for pageIndex values that are out of range
      */
     public int pageItemCount(int pageIndex) {
-        return pageIndex > pageCount() ? -1 : pageIndex == pageCount() ? itemCount() % itemsPerPage : itemsPerPage;
+        return pageIndex >= pageCount() ? -1 : pageIndex+1 == pageCount() ? itemCount() % itemsPerPage : itemsPerPage;
     }
 
     /**
@@ -43,7 +41,7 @@ public class PaginationHelper<I> {
      * this method should return -1 for itemIndex values that are out of range
      */
     public int pageIndex(int itemIndex) {
-        return itemIndex >= itemCount() - 1 ? -1 : (int)(Math.ceil((itemIndex + 1)/(double)itemsPerPage));
+        return itemIndex >= itemCount() || itemIndex < 0 ? -1 : (int)(Math.ceil((itemIndex + 1)/(double)itemsPerPage)) - 1;
     }
 
 }
