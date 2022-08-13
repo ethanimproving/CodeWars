@@ -2,37 +2,38 @@ package com.leetcode.stack;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
 import java.util.Stack;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ValidParentheses {
     // ([]{})
     public boolean isValid(String s) {
-        if (s.length() % 2 != 0) return false; // If length is odd, we know there's an unclosed parenthese
-        Stack<Character> stack = new Stack<>();
-        for (int i = 0; i < s.length(); i++) {
-            if (stack.isEmpty() && (s.charAt(i) == ')' || s.charAt(i) == '}' || s.charAt(i) == ']'))
-                return false; // If first character is a closing parenthese, there can't be an opening
-            else {
-                if (!stack.isEmpty()) {
-                    if (stack.peek() == '(' && s.charAt(i) == ')')
-                        stack.pop();
-                    else if (stack.peek() == '{' && s.charAt(i) == '}')
-                        stack.pop();
-                    else if (stack.peek() == '[' && s.charAt(i) == ']')
-                        stack.pop();
-                    else
-                        stack.add(s.charAt(i)); // If current char doesn't close an unclosed char in the stack, add it to the stack
-                } else stack.add(s.charAt(i)); // Add unclosed chars to stack
-            }
+        if (s.length() % 2 != 0) return false;
+        var stack = new Stack<Character>();
+        if (!s.isBlank() && stack.add(s.charAt(0)) && Arrays.asList(')', '}', ']').contains(s.charAt(0))) return false;
+        for (int i = 1; i < s.length(); i++) {
+            var currentChar = s.charAt(i);
+            var previousChar = stack.peek();
+            if (previousChar == '(' && currentChar == ')')
+                stack.pop();
+            else if (previousChar == '[' && currentChar == ']')
+                stack.pop();
+            else if (previousChar == '{' && currentChar == '}')
+                stack.pop();
+            else
+                stack.add(currentChar);
         }
         return stack.isEmpty();
     }
 
     @Test
     void demo() {
-        boolean result = isValid("([]{})");
-        assertTrue(result);
+        assertTrue(isValid("([]{})"));      // valid outer
+        assertFalse(isValid("(([]{})"));    // odd number
+        assertTrue(isValid(""));            // empty
+        assertFalse(isValid(")([]{}"));      // closing first char
     }
 }
