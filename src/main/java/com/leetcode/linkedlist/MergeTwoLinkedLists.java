@@ -7,6 +7,9 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+/**
+ * @see <a href="https://leetcode.com/problems/merge-two-sorted-lists/">Merge Two Sorted Lists</a>
+ */
 public class MergeTwoLinkedLists {
     public Node mergeTwoLists(Node list1, Node list2) {
         Node head;
