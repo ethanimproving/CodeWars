@@ -1,6 +1,5 @@
 package com.leetcode.linkedlist;
 
-import lombok.EqualsAndHashCode;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -48,7 +47,6 @@ public class MergeTwoLinkedLists {
         return currentHead;
     }
 
-    @EqualsAndHashCode
     private static class Node {
         int val;
         Node next;
