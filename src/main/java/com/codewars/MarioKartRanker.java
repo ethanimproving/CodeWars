@@ -6,6 +6,7 @@ import lombok.Getter;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 
 public class MarioKartRanker {
 
@@ -13,30 +14,35 @@ public class MarioKartRanker {
     void demo() {
         var characters = new ArrayList<Combo>();
         int i = 0;
+        int counter = 0;
         for (var character : Character.values()) {
             for (var kart : Kart.values()) {
                 for (var tire : Tire.values()) {
-                    characters.add(new Combo(character, kart, tire));
+                    for (var glider : Glider.values()) {
+                        characters.add(new Combo(character, kart, tire, glider));
+                        counter++;
+                    }
                 }
             }
             i++;
         }
+        System.out.println("Combinations: " + counter);
 
+        characters.stream().filter(combo -> combo.getSpeed() >= 4.5 && combo.getAcceleration() >= 3 && combo.getTotal() > 21).sorted(Comparator.comparing(Combo::getTotal).reversed()).forEach(System.out::println);
     }
 
     @Data
     static class Combo {
 
-        public Combo(Character character, Kart kart, Tire tire) {
-            this.name = String.format("%s, %s, %s", character.getCharacter(), kart.getKart(), tire.getTire());
-            this.speed = character.getSpeed() + kart.getSpeed() + tire.getSpeed();
-            this.acceleration = character.getAcceleration() + kart.getAcceleration() + tire.getAcceleration();
-            this.weight = character.getWeight() + kart.getWeight() + tire.getWeight();
-            this.handling = character.getHandling() + kart.getHandling() + tire.getHandling();
-            this.tractionGrip = character.getTractionGrip() + kart.getTractionGrip() + tire.getTractionGrip();
-            this.miniTurbo = character.getMiniTurbo() + kart.getMiniTurbo() + tire.getMiniTurbo();
-            this.total = character.getTotal() + kart.getTotal() + tire.getTotal();
-            System.out.println(this);
+        public Combo(Character character, Kart kart, Tire tire, Glider glider) {
+            this.name = String.format("%s, %s, %s, %s", character.getCharacter(), kart.getKart(), tire.getTire(), glider.getGlider());
+            this.speed = character.getSpeed() + kart.getSpeed() + tire.getSpeed() + glider.getSpeed();
+            this.acceleration = character.getAcceleration() + kart.getAcceleration() + tire.getAcceleration() + glider.getAcceleration();
+            this.weight = character.getWeight() + kart.getWeight() + tire.getWeight() + glider.getWeight();
+            this.handling = character.getHandling() + kart.getHandling() + tire.getHandling() + glider.getHandling();
+            this.tractionGrip = character.getTractionGrip() + kart.getTractionGrip() + tire.getTractionGrip() + glider.getTractionGrip();
+            this.miniTurbo = character.getMiniTurbo() + kart.getMiniTurbo() + tire.getMiniTurbo() + glider.getMiniTurbo();
+            this.total = speed + acceleration + weight + handling + tractionGrip + miniTurbo;
         }
 
         private String name;
@@ -88,8 +94,8 @@ public class MarioKartRanker {
         ROLLER("Roller", -0.5, +0.5, -0.5, +0.25, -0.25, +0.75, +0.25),
         SLIM("Slim", +0.25, -0.5, 0, +0.25, -1.0, -0.25, -1.25),
         SLICK("Slick", +0.5, -0.75, +0.25, -0.25, -1.25, -0.75, -2.25),
-        METAL("Metal", +0.5, -1.0, +0.5, -0.25, -0.75, -0 / 75, -1),
-        BUTTON("Button", -0.25, +0.25, -0.5, 0, -0 / 5, +0.5, 0),
+        METAL("Metal", +0.5, -1.0, +0.5, -0.25, -0.75, -0.75, -1),
+        BUTTON("Button", -0.25, +0.25, -0.5, 0, -0.5, +0.5, 0),
         OFF_ROAD("Off-Road", +0.25, -0.25, +0.25, -0.5, +0.25, -0.5, -0.5),
         SPONGE("Sponge", -0.25, 0, -0.25, -0.25, +0.25, +0.25, -0.25),
         WOOD("Wood", +0.25, -0.5, 0, +0.25, -1.0, -0.25, -1.25),
@@ -97,7 +103,7 @@ public class MarioKartRanker {
         BLUE_STANDARD("Blue Standard", 0, 0, 0, 0, 0, 0, 0),
         HOT_MONSTER("Hot Monster", 0, -0.5, +0.5, -0.75, +0.5, -0.25, -0.5),
         AZURE_ROLLER("Azure Roller", -0.5, +0.5, -0.5, +0.25, -0.25, +0.75, +0.25),
-        CRIMSON_SLIM("Crimson Slim", +0.25, -0.5, 0, +0.25, -1.0, -0 / 25, -1),
+        CRIMSON_SLIM("Crimson Slim", +0.25, -0.5, 0, +0.25, -1.0, -0.25, -1),
         CYBER_SLICK("Cyber Slick", +0.5, -0.75, +0.25, -0.25, -1.25, -0.75, -2.25),
         RETRO_OFF_ROAD("Retro Off-Road", +0.25, -0.25, +0.25, -0.5, +0.25, -0.5, -0.5),
         GOLD_TIRES("Gold Tires", +0.5, -1.0, +0.5, -0.25, -0.75, -0.75, -1.75),
@@ -113,6 +119,34 @@ public class MarioKartRanker {
         private double tractionGrip;
         private double miniTurbo;
         private double total;
+    }
+
+    @AllArgsConstructor
+    @Getter
+    enum Glider {
+
+        SUPER_GLIDER("Super Glider", 0, 0, 0, 0, 0, 0),
+        CLOUD_GLIDER("Cloud Glider", -0.25, +0.25, -0.25, 0, 0, +0.25),
+        WARIO_WING("Wario Wing", 0, 0, +0.25, 0, -0.25, 0),
+        WADDLE_WING("Waddle Wing", 0, 0, 0, 0, 0, 0),
+        PEACH_PARASOL("Peach Parasol", -0.25, +0.25, -0.25, 0, 0, +0.25),
+        PARACHUTE("Parachute", -0.25, +0.25, -0.25, 0, 0, +0.25),
+        PARAFOIL("Parafoil", -0.25, +0.25, 0, 0, -0.25, +0.25),
+        FLOWER_GLIDER("Flower Glider", -0.25, +0.25, -0.25, 0, 0, +0.25),
+        BOWSER_KITE("Bowser Kite", -0.25, +0.25, 0, 0, -0.25, +0.25),
+        PLANE_GLIDER("Plane Glider", 0, 0, +0.25, 0, -0.25, 0),
+        MKTV_PARAFOIL("MKTV Parafoil", -0.25, +0.25, 0, 0, -0.25, +0.25),
+        GOLD_GLIDER("Gold Glider", 0, 0, +0.25, 0, -0.25, 0),
+        HYLIAN_KITE("Hylian Kite", 0, 0, 0, 0, 0, 0),
+        PAPER_GLIDER("Paper Glider", -0.25, +0.25, -0.25, 0, 0, +0.25);
+
+        private String glider;
+        private double speed;
+        private double acceleration;
+        private double weight;
+        private double handling;
+        private double tractionGrip;
+        private double miniTurbo;
     }
 
     @AllArgsConstructor
