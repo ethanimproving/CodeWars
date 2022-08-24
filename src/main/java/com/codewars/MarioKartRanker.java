@@ -7,6 +7,10 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 public class MarioKartRanker {
 
@@ -28,14 +32,36 @@ public class MarioKartRanker {
         }
         System.out.println("Combinations: " + counter);
 
-        characters.stream().filter(combo -> combo.getSpeed() >= 4.5 && combo.getAcceleration() >= 3 && combo.getTotal() > 21).sorted(Comparator.comparing(Combo::getTotal).reversed()).forEach(System.out::println);
+        // Fastest Speed
+        System.out.println("Best Overall Combo:::");
+        System.out.println(characters.stream().sorted(Comparator.comparing(Combo::evaluateCharacter).reversed()).findFirst().orElseThrow());
+        System.out.println();
+
+        // Fastest Speed
+        System.out.println("Fastest Speed + Acceleration:::");
+        System.out.println(characters.stream().sorted(Comparator.comparing(Combo::getFirstMetrics).reversed()).findFirst().orElseThrow());
+        System.out.println();
+
+        System.out.println("Top 10 Best Overall:::");
+        characters.stream()
+                .filter(combo -> combo.getFirstMetrics() >= 7.75)
+//                .filter(combo -> combo.getTotal() >= 22.5)
+                .sorted(Comparator.comparing(Combo::evaluateCharacter).reversed())
+                .filter(distinctByKey(Combo::getSpeed))
+                .sorted(Comparator.comparing(Combo::getSpeed).reversed())
+                .limit(10).forEach(System.out::println);
+    }
+
+    public static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
+        Set<Object> seen = ConcurrentHashMap.newKeySet();
+        return t -> seen.add(keyExtractor.apply(t));
     }
 
     @Data
     static class Combo {
 
         public Combo(Character character, Kart kart, Tire tire, Glider glider) {
-            this.name = String.format("%s, %s, %s, %s", character.getCharacter(), kart.getKart(), tire.getTire(), glider.getGlider());
+            this.combo = String.format("%s, %s, %s, %s", character.getCharacter(), kart.getKart(), tire.getTire(), glider.getGlider());
             this.speed = character.getSpeed() + kart.getSpeed() + tire.getSpeed() + glider.getSpeed();
             this.acceleration = character.getAcceleration() + kart.getAcceleration() + tire.getAcceleration() + glider.getAcceleration();
             this.weight = character.getWeight() + kart.getWeight() + tire.getWeight() + glider.getWeight();
@@ -45,7 +71,20 @@ public class MarioKartRanker {
             this.total = speed + acceleration + weight + handling + tractionGrip + miniTurbo;
         }
 
-        private String name;
+        public double getFirstMetrics() {
+            return speed + acceleration;
+        }
+
+        /* These metrics are worth 2/3 of speed and acceleration. */
+        public double getSecondMetrics() {
+            return (weight + handling + tractionGrip + miniTurbo) * 0.67;
+        }
+
+        public double evaluateCharacter() {
+            return getFirstMetrics() + getSecondMetrics();
+        }
+
+        private String combo;
         private double speed;
         private double acceleration;
         private double weight;
@@ -53,6 +92,19 @@ public class MarioKartRanker {
         private double tractionGrip;
         private double miniTurbo;
         private double total;
+
+        @Override
+        public String toString() {
+            return combo + ":\n" +
+                    "speed=" + speed +
+                    ", acceleration=" + acceleration +
+                    ", weight=" + weight +
+                    ", handling=" + handling +
+                    ", tractionGrip=" + tractionGrip +
+                    ", miniTurbo=" + miniTurbo +
+                    ", total=" + total +
+                    '\n';
+        }
     }
 
     @AllArgsConstructor
