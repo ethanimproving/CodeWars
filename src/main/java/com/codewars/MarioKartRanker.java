@@ -45,6 +45,11 @@ public class MarioKartRanker {
         System.out.println("Top 10 Best Overall:::");
         characters.stream()
                 .filter(combo -> combo.getFirstMetrics() >= 7.75)
+                .filter(combo -> combo.getSpeed() >= 3.5)
+                .filter(combo -> combo.getAcceleration() >= 3.5)
+//                .filter(combo -> !combo.getCombo().contains("Pipe Frame"))
+//                .filter(combo -> !combo.getCombo().contains("Varmint"))
+//                .filter(combo -> combo.getCombo().contains("Bike"))
 //                .filter(combo -> combo.getTotal() >= 22.5)
                 .sorted(Comparator.comparing(Combo::evaluateCharacter).reversed())
                 .filter(distinctByKey(Combo::getSpeed))
