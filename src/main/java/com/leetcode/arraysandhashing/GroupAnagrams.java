@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 public class GroupAnagrams {
 
     public List<List<String>> groupAnagrams(String[] strs) {
-        List<List<String>> res = new ArrayList<>();
+        var res = new ArrayList<List<String>>();
         if (strs.length == 0) return res;
         HashMap<String, List<String>> map = new HashMap<>();
         for (String s : strs) {
