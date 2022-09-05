@@ -15,7 +15,7 @@ public class KClosestPointsToOrigin {
         /* Sort by Euclidean distance (√(x1 - x2)2 + (y1 - y2)2). */
         var maxHeap = new PriorityQueue<int[]>((a, b) -> Integer.compare((b[0] * b[0] + b[1] * b[1]), (a[0] * a[0] + a[1] * a[1])));
 
-        /* Add the k biggest numbers to MaxHeap */
+        /* Add the k farthest points to MaxHeap */
         for (int[] point : points) {
             maxHeap.add(point);
 
