@@ -6,8 +6,6 @@ import org.junit.jupiter.api.Test;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.PriorityQueue;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -28,9 +26,12 @@ public class TaskScheduler {
          * The time a task of the same type can be executed will be current time + n. */
         var waitingQueue = new LinkedList<Pair<Integer, Integer>>();
 
+        /* Each char index holds an integer that indicates how many of that task is left. */
+        int[] arr = new int[26];
+        for (char task : tasks) arr[task - 'A']++; // Increment the value at char index each time it appears.
 
-        /* Group tasks by how many occurrences there are, then add to priority queue. */
-        maxHeap.addAll(new String(tasks).chars().mapToObj(i -> (char) i).collect(Collectors.groupingBy(Function.identity(), Collectors.collectingAndThen(Collectors.counting(), Long::intValue))).values());
+        /* Add number of each task in maxHeap ordering my most frequent. */
+        for (int val : arr) if (val > 0) maxHeap.add(val);
 
         int time = 0;
         /* If either queue has any elements, keep processing. */
